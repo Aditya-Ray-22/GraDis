@@ -19,7 +19,7 @@ from scipy.signal import argrelextrema, savgol_filter
 # USER PARAMETERS
 input_grabens = r"D:/Master/Lunar LD/Data/graben.shp"
 dem_path = r"D:/Master/Lunar LD/Data/DEM.tif"
-output_dir = r"D:/Master/Lunar LD/Results/MAD"
+output_dir = r"D:/Master/Lunar LD/Results/DATA"
 gdb_name = "graben.gdb"
 
 transect_spacing = 2000  # Distance between transect center-points along graben (m)
@@ -759,3 +759,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
