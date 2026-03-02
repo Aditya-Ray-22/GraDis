@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Mar  2 22:23:30 2026
+
+@author: Adi
+"""
 import os
 import math
 import arcpy
@@ -13,7 +19,7 @@ from scipy.signal import argrelextrema, savgol_filter
 # USER PARAMETERS
 input_grabens = r"D:/Master/Lunar LD/Data/graben.shp"
 dem_path = r"D:/Master/Lunar LD/Data/DEM.tif"
-output_dir = r"D:/Master/Lunar LD/Results/DAT"
+output_dir = r"D:/Master/Lunar LD/Results/MAD"
 gdb_name = "graben.gdb"
 
 transect_spacing = 2000  # Distance between transect center-points along graben (m)
@@ -675,16 +681,24 @@ def analyze_profiles_and_produce_metrics(csv_dir, plots_dir, summary_dir, sample
             df["D"] = df[["D1", "D2"]].min(axis=1)
             df["LD"] = df["L"] / df["D"].replace(0, np.nan)
             
-            # 2-sigma outlier removal
-            mean_ld = df["LD"].mean()
-            std_ld = df["LD"].std()
-            lower_bound = mean_ld - 2 * std_ld
-            upper_bound = mean_ld + 2 * std_ld
+            # MAD-based outlier removal (robust)
+            ld_vals = df["LD"].dropna()
             
-            df_filtered = df[(df["LD"].notna()) & (df["LD"] >= lower_bound) & (df["LD"] <= upper_bound)]
+            median_ld = np.median(ld_vals)
+            mad = np.median(np.abs(ld_vals - median_ld))
+            
+            lower_bound = median_ld - 2 * mad
+            upper_bound = median_ld + 2 * mad
+            
+            df_filtered = df[(df["LD"].notna()) &
+                             (df["LD"] >= lower_bound) &
+                             (df["LD"] <= upper_bound)]
+            
+            n_excluded = len(df) - len(df_filtered)
+            print(f"{graben_folder}: {n_excluded} profiles excluded by MAD filtering")
             
             if df_filtered.empty:
-                print(f"WARNING: {graben_folder} filtered entirely by 2-sigma rule")
+                print(f"WARNING: {graben_folder} filtered entirely by MAD rule")
                 continue
             
             avg_D = df_filtered["D"].mean()
