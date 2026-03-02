@@ -18,7 +18,7 @@ Developed by **Aditya Ray** & **Nilanjan Dasgupta**, Department of Geology, Pres
 * **Transect Generation**: Creates perpendicular sampling lines at defined intervals along graben traces.
 * **Signal Processing**: Uses Savitzky-Golay filters to smooth topographic noise for reliable feature detection.
 * **Morphometric Analysis**: Identifies floors and shoulders to calculate displacement metrics.
-* **Outlier Control**: Implements 2-sigma filtering for final $L/D$ summary statistics.
+* **Outlier Control**: Implements 2-MAD filtering for final $L/D$ summary statistics.
 
 ---
 
